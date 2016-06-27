@@ -1,18 +1,21 @@
+
 'use strict';
 
 import React from 'react';
 
 import ReactNative, {
   Text,
-  View
+  View,
+  ListView
 } from 'react-native';
 
 import shallowEqual from 'shallowequal';
 import findIndex from 'lodash.findindex';
+import {forceClient} from 'react.force';
 
 import {
   reportQuery,
-  getByReportUserId
+  getByReportId
 } from 'react.force.data';
 
 const subscribers = [];
@@ -33,10 +36,12 @@ const notify = (id, record) => {
     subscribers.forEach((subscriber)=>{
       if(subscriber && subscriber.props && subscriber.props.id){
         const searchId = subscriber.props.id;
+        /*const index = findIndex(ids, (id) => {
+          return id.indexOf(searchId)>-1;
+        });*/
         const index = id.indexOf(searchId)>-1;
-
         if(index>-1){
-          // const record = records[index];
+          //const record = records[index];
           subscriber.updateReportData(record);
         }
       }
@@ -45,7 +50,6 @@ const notify = (id, record) => {
 };
 
 reportQuery.addListener(notify);
-
 
 module.exports = React.createClass ({
   getDefaultProps(){
@@ -62,9 +66,11 @@ module.exports = React.createClass ({
     doRefresh: React.PropTypes.func
   },
   getInitialState(){
+    //const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     return {
       reportData:this.props.reportData?this.props.reportData:{Name:' ',attributes:{}},
       loading:false
+      //dataSource: ds.cloneWithRows([])
     };
   },
   getChildContext() {
@@ -111,6 +117,42 @@ module.exports = React.createClass ({
       });
   },
 
+  /*getDataSource (items) {
+    return this.state.dataSource.cloneWithRows(items);
+  },
+  getData() {
+    this.setState({loading:true});
+    //check if data is cached else do query
+    forceClient.reportData(this.props.reportId,
+      (response)=>{
+        if(response){
+          let groupings = response.groupingsDown.groupings,
+              factMap = response.factMap,
+              dataSource,
+              sumOfEntities;
+
+          //console.log("****REPORTRESPONSE: " + JSON.stringify(response));
+          dataSource = groupings.map(function(grouping, index){
+            let mappedObject = Object.assign(grouping, factMap[grouping.key + '!T']);
+            mappedObject.position = grouping.key;
+            return mappedObject;
+          }).find(function(dataBlob){
+            return dataBlob.value === this.props.entityId;
+          }.bind(this));
+
+          this.setState({
+            reportData: response,
+            dataSource: this.getDataSource(dataSource.rows),
+            loading: false
+          });
+
+        }
+      },
+      (error)=> {
+        console.warn(error);
+      }
+    );
+  },*/
   render() {
     return (
       <View style={this.props.style}>
