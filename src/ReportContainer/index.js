@@ -109,7 +109,7 @@ module.exports = React.createClass ({
       .then((opts)=>{
         if(opts.cachedReportData){
           this.setState({
-            reportData: opts.reportData
+            reportData: opts.cachedReportData
           });
         }
       });
