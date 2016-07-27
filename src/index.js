@@ -28,6 +28,8 @@ import SobjContainer from './SobjContainer';
 import ChatterUserContainer from './ChatterUserContainer';
 import BtLogoContainer from './BtLogoContainer';
 import ReportContainer from './ReportContainer';
+import DashboardContainer from './DashboardContainer';
+
 import List from './List';
 import RelevantItems from './RelevantItems';
 import ScrollRefresh from './ScrollRefresh';
@@ -43,5 +45,6 @@ module.exports = {
   ScrollRefresh: ScrollRefresh,
   utils: utils,
   BtLogoContainer: BtLogoContainer,
-  ReportContainer: ReportContainer
+  ReportContainer: ReportContainer,
+  DashboardContainer: DashboardContainer
 };

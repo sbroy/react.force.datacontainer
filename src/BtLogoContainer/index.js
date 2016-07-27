@@ -133,7 +133,7 @@ module.exports = React.createClass ({
     if(!shallowEqual(this.state.btLogoData, nextState.btLogoData)){
       return true;
     }
-    return true;
+    return false;
 
   }
 });

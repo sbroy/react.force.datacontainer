@@ -99,7 +99,7 @@ module.exports = React.createClass ({
   },
   getInfo() {
     this.setState({loading:true});
-    if(!this.props.type || !this.props.id){
+    if(!this.props.id){
       return;
     }
     getByChatterUserId(this.props.id)
