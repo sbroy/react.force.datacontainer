@@ -3,13 +3,15 @@
 import React from 'react';
 
 import ReactNative, {
-	Text,
-	View
+  Text,
+  View
 } from 'react-native';
 
 import {
-	getDashboardById,
-	getDashboardData
+  getDashboardById,
+  getDashboardData,
+  waitForDashboardRefresh,
+  refreshDashboard
 } from 'react.force.data';
 
 import shallowEqual from 'shallowequal';
@@ -47,79 +49,82 @@ const notify = (ids, records) => {
 
 getDashboardData.addListener(notify);
 
-let dbRefreshLoop, dbStatusLoop;
-
 module.exports = React.createClass ({
-	getDefaultProps(){
-		return {
-			id: null,
-			autoRefresh: false,
-			refreshInterval: 1800000, // in ms, default of half an hour
-			dbRefreshLoop: null,
-			dbStatusLoop: null
-		}
-	},
+  getDefaultProps(){
+    return {
+      id: null,
+      autoRefresh: false,
+      refreshInterval: 1800000, // in ms, default of half an hour
+      dbRefreshLoop: null,
+      dbStatusLoop: null
+    }
+  },
 
-	childContextTypes: {
-		dashboardData: React.PropTypes.object,
-	},
+  childContextTypes: {
+    dashboardData: React.PropTypes.object,
+  },
 
-	getInitialState(){
-		return {
-			dbData: this.props.dbData ? this.props.dbData : {componentData:[], dashboardMetadata:{}}
-		}
-	},
+  getInitialState(){
+    return {
+      dbData: this.props.dbData ? this.props.dbData : {componentData:[], dashboardMetadata:{}}
+    }
+  },
 
-	getChildContext() {
-		return {
-			dashboardData: this.state.dbData
-		}
-	},
+  getChildContext() {
+    return {
+      dashboardData: this.state.dbData
+    }
+  },
 
-	componentDidMount(){
-		this.getInfo();
-		subscribe(this);
-	},
+  componentDidMount(){
+    this.getInfo();
+    subscribe(this);
+  },
 
-	updateDbData(dbData){
-		this.setState({
-			dbData: dbData
-		});
-	},
+  updateDbData(dbData){
+    this.setState({
+      dbData: dbData
+    });
+  },
 
-	getInfo(){
-		if(!this.props.id){
-			return;
-		}
-		getDashboardById(this.props.id, this.props.autoRefresh, this.props.refreshInterval, this.props.dbRefreshLoop, this.props.dbStatusLoop);
-	},
+  getInfo(){
+    if(!this.props.id){
+      return;
+    }
+    //TODO : Kapil check why the loop ids are not returning to props
+    getDashboardById(this.props.id, this.props.autoRefresh, this.props.refreshInterval, this.props.dbRefreshLoop, this.props.dbStatusLoop);
+  },
 
-	render(){
-		return (
-			<View style={this.props.style}>
-				{this.props.children}
-			</View>
-		)
-	},
+  render(){
+    return (
+      <View style={this.props.style}>
+        {this.props.children}
+      </View>
+    )
+  },
 
-	shouldComponentUpdate(nextProps, nextState){
-		return this.props.id !== nextProps.id ||
-					 !shallowEqual(this.state.dbData, nextState.dbData);
-	},
+  shouldComponentUpdate(nextProps, nextState){
+    return this.props.id !== nextProps.id ||
+           !shallowEqual(this.state.dbData, nextState.dbData);
+  },
 
-	componentDidUpdate(prevProps){
-		if(this.props.id !== prevProps.id){
-			this.getInfo();
-		}
-	},
+  componentDidUpdate(prevProps){
+    if(this.props.id !== prevProps.id){
+      this.getInfo();
+    }
+  },
 
-	componentWillUnmount(){
-		unsubscribe(this);
-		this.disableAllLoops();
-	},
+  componentWillUnmount(){
+    unsubscribe(this);
+    this.disableAllLoops();
+  },
 
-	disableAllLoops(){
-		this.props.dbRefreshLoop && this.props.dbRefreshLoop.stop();
-		this.props.dbStatusLoop && this.props.dbStatusLoop.stop();
-	}
+  disableAllLoops(){
+    this.props.dbRefreshLoop && this.props.dbRefreshLoop.stop();
+    this.props.dbStatusLoop && this.props.dbStatusLoop.stop();
+
+    waitForDashboardRefresh.stop();
+    refreshDashboard.stop();
+
+  }
 })
