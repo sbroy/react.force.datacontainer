@@ -64,9 +64,13 @@ module.exports = React.createClass ({
     dashboardData: React.PropTypes.object,
   },
 
+  contextTypes: {
+    dashboardData: React.PropTypes.object,
+  },
+
   getInitialState(){
     return {
-      dbData: this.props.dbData ? this.props.dbData : {componentData:[], dashboardMetadata:{}}
+      dbData: this.props.dbData ? this.props.dbData : (this.context.dashboardData ? this.context.dashboardData : {componentData:[], dashboardMetadata:{}})
     }
   },
 

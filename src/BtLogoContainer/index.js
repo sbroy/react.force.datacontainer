@@ -62,9 +62,12 @@ module.exports = React.createClass ({
     btLogoData: React.PropTypes.object,
     doRefresh: React.PropTypes.func
   },
+  contextTypes: {
+    btLogoData: React.PropTypes.object
+  },
   getInitialState(){
     return {
-      btLogoData:this.props.btLogoData?this.props.btLogoData:{Name:' ',attributes:{}},
+      btLogoData: this.props.btLogoData ? this.props.btLogoData : (this.context.btLogoData ? this.context.btLogoData : {Name:' ',attributes:{}}),
       loading:false
     };
   },

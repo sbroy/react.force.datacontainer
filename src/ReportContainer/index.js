@@ -66,9 +66,12 @@ module.exports = React.createClass ({
     reportData: React.PropTypes.object,
     doRefresh: React.PropTypes.func
   },
+  contextTypes: {
+    reportData: React.PropTypes.object
+  },
   getInitialState(){
     return {
-      reportData:this.props.reportData?this.props.reportData:{Name:' ',attributes:{}},
+      reportData: this.props.reportData ? this.props.reportData : (this.context.reportData ? this.context.reportData : {Name:' ',attributes:{}}),
       loading:false
     };
   },

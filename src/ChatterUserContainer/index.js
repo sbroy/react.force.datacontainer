@@ -62,9 +62,12 @@ module.exports = React.createClass ({
     chatterData: React.PropTypes.object,
     doRefresh: React.PropTypes.func
   },
+  contextTypes: {
+    chatterData: React.PropTypes.object
+  },
   getInitialState(){
     return {
-      chatterData:this.props.chatterData?this.props.chatterData:{Name:' ',attributes:{}},
+      chatterData: this.props.chatterData ? this.props.chatterData : (this.context.chatterData ? this.context.chatterData : {Name:' ',attributes:{}}),
       loading:false
     };
   },

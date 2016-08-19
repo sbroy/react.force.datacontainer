@@ -59,7 +59,7 @@ const notify = (ids,sobjs,compactLayout,defaultLayout) => {
     subscribers.forEach((subscriber)=>{
       if(subscriber && subscriber.props && subscriber.props.id){
         const searchId = subscriber.props.id;
-        const index = findIndex(ids, (id) => { 
+        const index = findIndex(ids, (id) => {
           return id.indexOf(searchId)>-1;
         });
         if(index>-1){
@@ -92,10 +92,14 @@ module.exports = React.createClass ({
     doRefresh: React.PropTypes.func,
     refreshedDate: React.PropTypes.instanceOf(Date)
   },
+  contextTypes: {
+    sobj: React.PropTypes.object,
+    compactLayout: React.PropTypes.object
+  },
   getInitialState(){
     return {
-      sobj:this.props.sobj?this.props.sobj:{Name:' ',attributes:{}},
-      compactLayout:{},
+      sobj : this.props.sobj ? this.props.sobj : (this.context.sobj ? this.context.sobj : {Name:' ',attributes:{}}),
+      compactLayout: this.context.compactLayout ? this.context.compactLayout : {},
       defaultLayout:{},
       loading:false,
       refreshedDate: new Date()
